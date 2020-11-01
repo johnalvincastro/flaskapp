@@ -1,21 +1,164 @@
 {% extends "bootstrap/base.html" %}
 
+{% block navbar %}
+<div class="navbar navbar-fixed-top">
+
+    <!-- ... -->
+</div>
+{% endblock %}
+
 {% block content %}
-<h1>User Login</h1>
+<div class="container">
+    <h1>Welcome</h1>
 
-<form method="POST" action="">
 
-                <div class="container container-table">
-                    <div class="row vertical-center-row">
-                        <div class="text-center col-md-4 col-md-offset-4" style="background:rgb(255, 255, 255)">
-                            user ID <input type="text" name="username">
-                            <br>
-                                Password <input type="password" name="password">
-                            <br>
-                                <input type="submit"></div>
+
+    <div class="container container-table">
+        <div class="row vertical-center-row">
+            <div class="text-center col-md-4 col-md-offset-4" style="background:rgb(255, 255, 255)">
+                {% if data %}
+                Hello, signed is as {{ data[1] }}
+                <p>Staff ID: {{ data[0]}} </p>
+                <p>Working at Hospital ID: {{ data[2] }}</p>
+                {% else %}
+                Hello,
+                {% endif %}
+                <p>
+                    <!--Collapse Admit Form
+                    <a class="btn btn-primary" data-toggle="collapse" href="#collapseAdmitForm" role="button"
+                        aria-expanded="false" aria-controls="collapseExample">
+                        Admit a Patient
+                    </a>-->
+                    <button class="btn btn-primary" type="button" data-toggle="collapse"
+                        data-target="#collapseAdmitForm" aria-expanded="false" aria-controls="collapseExample">
+                        Admit a Patient
+                    </button>
+                    <button class="btn btn-primary" type="button" data-toggle="collapse"
+                        data-target="#collapseVisitForm" aria-expanded="false" aria-controls="collapseExample">
+                        New Visit
+                    </button>
+                </p>
+                {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                {% for message in messages %}
+                <h3>{{ message }} </h3>
+                {% endfor %}
+                {% endif %}
+                {% endwith %}
+            </div>
+        </div>
+    </div>
+
+
+    <!--SECTION TO ADMIT PATIENT-->
+    <form method="POST" action="/addPatient">
+        <div class="container container-table">
+            <div class="row vertical-center-row">
+
+                <div class="collapse" id="collapseAdmitForm">
+                    <!--Admit Form-->
+                    <div class="card card-body">
+                        <div class="form-group row">
+                            <label for="example-text-input" class="col-2 col-form-label">Create Patient ID</label>
+                            <div class="col-10">
+                                <input class="form-control" type="text" value="ex. P12345 " id="example-text-input"
+                                    name="patientID">
+                            </div>
+                        </div>
+                        <div class="card card-body">
+                            <div class="form-group row">
+                                <label for="example-date-input" class="col-2 col-form-label">Date of Birth</label>
+                                <div class="col-10">
+                                    <input class="form-control" type="date" value="2011-08-19" id="example-text-input"
+                                        name="patientDOB">
+                                </div>
+                            </div>
+                            <div class="card card-body">
+                                <div class="form-group row">
+                                    <label for="example-text-input" class="col-2 col-form-label">Patient Name</label>
+                                    <div class="col-10">
+                                        <input class="form-control" type="text" value="ex. Jane Doe"
+                                            id="example-text-input" name="patientName">
+                                    </div>
+                                </div>
+                                <div class="card card-body">
+                                    <div class="form-group row">
+                                        <label for="example-text-input" class="col-2 col-form-label">Create
+                                            Password</label>
+                                        <div class="col-10">
+                                            <input class="form-control" type="password" value="ex. biscuits12"
+                                                id="example-text-input" name="patientPW" required>
+                                        </div>
+                                    </div>
+                                    <input type="submit">
+
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
+            </div>
+        </div>
+</div>
+</form>
 
+<!--SECTION TO CREATE A VISIT-->
+<form method="POST" action="/newVisit">
+    <div class="container container-table">
+        <div class="row vertical-center-row">
+
+            <div class="collapse" id="collapseVisitForm">
+                <!--Admit Form-->
+                <div class="card card-body">
+                    <div class="form-group row">
+                        <label for="example-text-input" class="col-2 col-form-label">New Visit ID</label>
+                        <div class="col-10">
+                            <input class="form-control" type="text" value="" id="example-text-input"
+                                name="visitID">
+                        </div>
+                    </div>
+                    <div class="card card-body">
+                        <div class="form-group row">
+                            <label for="example-date-input" class="col-2 col-form-label">Patient ID</label>
+                            <div class="col-10">
+                                <input class="form-control" type="text" value="" id="example-text-input"
+                                    name="patientID">
+                            </div>
+                        </div>
+                        <div class="card card-body">
+                            <div class="form-group row">
+                                <label for="example-text-input" class="col-2 col-form-label">Illness</label>
+                                <div class="col-10">
+                                    <input class="form-control" type="text" value="ex. Trauma" id="example-text-input"
+                                        name="illness">
+                                </div>
+                            </div>
+                            <div class="card card-body">
+                                <div class="form-group row">
+                                    <label for="example-text-input" class="col-2 col-form-label">Admit Date</label>
+                                    <div class="col-10">
+                                        <input class="form-control" type="date" value=""
+                                            id="example-text-input" name="admitDate" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Since New Patient this will be set as 2999-12-30 by default 
+                            <div class="card card-body">
+                                <div class="form-group row">
+                                    <label for="example-text-input" class="col-2 col-form-label">Discharge Date</label>
+                                    <div class="col-10">
+                                        <input class="form-control" type="date" value="2999-12-30"
+                                            id="example-text-input" name="disDate" required>
+                                    </div>
+                                </div>
+                            </div> -->
+                        </div>
+                    </div>
+                </div>
+                <input type="submit">
+            </div>
+        </div>
+    </div>
 
 </form>
 {% endblock %}
