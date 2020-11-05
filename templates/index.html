@@ -1,14 +1,20 @@
 {% extends "bootstrap/base.html" %}
 
 {% block content %}
-<h1>Flask</h1>
-<form method="POST" action="">
-    Name <input type="text" name="name">
-<br>
-    Email <input type="email" name="email">
-<br>
-    <input type="submit">
-
+<div class="container container-table">
+    <div class="row vertical-center-row">
+        <div class="text-center col-md-4 col-md-offset-4" style="background:rgb(255, 255, 255)">
+            <h1>Hospital System Management</h1>
+            <h3>Group4</h3>
+            <a href="/user_login"><button class="btn btn-primary" type="button">
+                 Staff Sign in
+            </button></a>
+            <a href="/#"><button class="btn btn-primary" type="button">
+                Admin Sign in
+           </button></a>
+        </div>
+    </div>
+</div>
 
 </form>
 {% endblock %}

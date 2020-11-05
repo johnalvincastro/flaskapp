@@ -19,6 +19,7 @@
                 {% if data %}
                 Hello, signed is as {{ data[1] }}
                 <p>Staff ID: {{ data[0]}} </p>
+                <p>Position: {{ pos[0]}} </p>
                 <p>Working at Hospital ID: {{ data[2] }}</p>
                 {% else %}
                 Hello,
@@ -36,6 +37,10 @@
                     <button class="btn btn-primary" type="button" data-toggle="collapse"
                         data-target="#collapseVisitForm" aria-expanded="false" aria-controls="collapseExample">
                         New Visit
+                    </button>
+                    <button class="btn btn-primary" type="button" data-toggle="collapse"
+                        data-target="#collapseGetPatientForm" aria-expanded="false" aria-controls="collapseExample">
+                        Get Patient Details
                     </button>
                 </p>
                 {% with messages = get_flashed_messages() %}
@@ -113,8 +118,7 @@
                     <div class="form-group row">
                         <label for="example-text-input" class="col-2 col-form-label">New Visit ID</label>
                         <div class="col-10">
-                            <input class="form-control" type="text" value="" id="example-text-input"
-                                name="visitID">
+                            <input class="form-control" type="text" value="" id="example-text-input" name="visitID">
                         </div>
                     </div>
                     <div class="card card-body">
@@ -137,8 +141,8 @@
                                 <div class="form-group row">
                                     <label for="example-text-input" class="col-2 col-form-label">Admit Date</label>
                                     <div class="col-10">
-                                        <input class="form-control" type="date" value=""
-                                            id="example-text-input" name="admitDate" required>
+                                        <input class="form-control" type="date" value="" id="example-text-input"
+                                            name="admitDate" required>
                                     </div>
                                 </div>
                             </div>
@@ -161,4 +165,43 @@
     </div>
 
 </form>
+
+
+<!--SECTION TO GET PATIENT DETAILS -->
+<form method="POST" action="/getPatientData">
+    <div class="container container-table">
+        <div class="row vertical-center-row">
+
+            <div class="collapse" id="collapseGetPatientForm">
+                <!--Admit Form-->
+                <div class="card card-body">
+                    <div class="form-group row">
+                        <label for="example-text-input" class="col-2 col-form-label">GET Patient ID</label>
+                        <div class="col-10">
+                            <input class="form-control" type="text" value="ex. P12345 " id="example-text-input"
+                                name="pid">
+                        </div>
+                    </div>
+                </div>
+                <!--<div class="card card-body">
+                    <div class="form-group row">
+                        <label for="example-date-input" class="col-2 col-form-label">Hospital</label>
+                        <div class="col-10">
+                            <input class="form-control" type="date" value="2011-08-19" id="example-text-input"
+                                name="patientDOB">
+                        </div>
+                    </div>
+
+                </div>-->
+                <input type="submit">
+            </div>
+        </div>
+    </div>
+
+
+</form>
+
+<div id="patient_data"> No paient data received yet</div>
+{{ result }}
+
 {% endblock %}
