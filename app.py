@@ -124,12 +124,13 @@ def createVisit():
 
 # GET added list of patients
 @app.route('/getPatientData')
-def users():
+def patients():
     cur = mysql.connection.cursor()
-    resultValue = cur.execute("SELECT * FROM patients")
+    resultValue = cur.execute("SELECT * FROM patient")
     if resultValue > 0:
         patientData = cur.fetchall()
-        return render_template('user_dash.html', patient_data = patientData)
+        print(patientData)
+        return render_template('user_dash.html', patientData = patientData)
 
 
 if __name__ == '__main__':
