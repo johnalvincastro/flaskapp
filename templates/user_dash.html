@@ -1,49 +1,63 @@
 {% extends "bootstrap/base.html" %}
 
 {% block navbar %}
-<div class="navbar navbar-fixed-top">
-
-    <!-- ... -->
+<div class="navbar navbar-light navbar-fixed-top">
+    <button>
+        <a class="navbar-brand" href="/"><span class="glyphicon glyphicon-home" aria-hidden="true"> </span></a>
+    </button>
 </div>
 {% endblock %}
 
 {% block content %}
 <div class="container">
+    {% if data and pos %}
+    <h1>Welcome {{ pos[0] }} {{ data[1] }}</h1>
+    {% else %}
     <h1>Welcome</h1>
+    {% endif %}
 
-
-
-    <div class="container container-table">
+    <div class="container">
         <div class="row vertical-center-row">
             <div class="text-center col-md-4 col-md-offset-4" style="background:rgb(255, 255, 255)">
                 {% if data %}
-                Hello, signed is as {{ data[1] }}
-                <p>Staff ID: {{ data[0]}} </p>
-                <p>Position: {{ pos[0]}} </p>
+                <p>Staff ID: {{ data[0] }}</p>
                 <p>Working at Hospital ID: {{ data[2] }}</p>
                 {% else %}
-                Hello,
+
                 {% endif %}
-                <p>
-                    <!--Collapse Admit Form
+                <!--Collapse Admit Form
                     <a class="btn btn-primary" data-toggle="collapse" href="#collapseAdmitForm" role="button"
                         aria-expanded="false" aria-controls="collapseExample">
                         Admit a Patient
                     </a>-->
-                    <button class="btn btn-primary" type="button" data-toggle="collapse"
-                        data-target="#collapseAdmitForm" aria-expanded="false" aria-controls="collapseExample">
-                        Admit a Patient
-                    </button>
-                    <button class="btn btn-primary" type="button" data-toggle="collapse"
-                        data-target="#collapseVisitForm" aria-expanded="false" aria-controls="collapseExample">
-                        New Visit
-                    </button>
-                <form action="/getPatientData">
-                    <button class="btn btn-primary" type="submit">
-                        Get Patient Details
-                    </button>
-                </form>
-                </p>
+                <ul class="list-group list-unstyled">
+                    <li>
+                        <button class="list-group-item list-group-item-action" type="button" data-toggle="collapse"
+                            data-target="#collapseAdmitForm" aria-expanded="false" aria-controls="collapseExample">
+                            Admit a Patient
+                        </button>
+                    </li>
+                    <li>
+                        <button class="list-group-item list-group-item-action" type="button" data-toggle="collapse"
+                            data-target="#collapseVisitForm" aria-expanded="false" aria-controls="collapseExample">
+                            New Visit
+                        </button>
+                    </li>
+                    <li>
+                        <form action="/getPatientData">
+                            <button class="list-group-item list-group-item-action" type="submit">
+                                Get Patients List
+                            </button>
+                        </form>
+                    </li>
+                    <li>
+                        <button class="list-group-item list-group-item-action" type="button" data-toggle="collapse"
+                            data-target="#collapseRxForm" aria-expanded="false" aria-controls="collapseExample">
+                            New Rx
+                        </button>
+                    </li>
+                </ul>
+
                 {% with messages = get_flashed_messages() %}
                 {% if messages %}
                 {% for message in messages %}
@@ -105,8 +119,9 @@
                 </div>
             </div>
         </div>
+    </form>
 </div>
-</form>
+
 
 <!--SECTION TO CREATE A VISIT-->
 <form method="POST" action="/newVisit">
@@ -166,36 +181,94 @@
     </div>
 
 </form>
-
+<!-- CONTENTS FOR PATIENT DATA-->
 <div class="container container-table">
     <div class="row vertical-center-row">
-            {% if not patientData %}
-            No patient data received yet
-            {% else %}
+        {% if not patientData %}
 
-            <!--{{ patientData }}-->
+        {% else %}
 
-            <table class="table table striped">
+        <table class="table table striped">
 
-                <tr>
-                    <th scope="col">Patient ID</th>
-                    <th scope="col">Patient DOB</th>
-                    <th scope="col">Patient Name</th>
-                    <th scope="col"> Account Password</th>
-                </tr>
-                {% for item in patientData %}
-                <tr>
-                    <td>{{ item[0] }} </td>
-                    <td>{{ item[1] }} </td>
-                    <td>{{ item[2] }} </td>
-                    <td>{{ item[3] }} </td>
-                </tr>
-                {% endfor %}
-            </table>
+            <tr>
+                <th scope="col">Patient ID</th>
+                <th scope="col">Patient DOB</th>
+                <th scope="col">Patient Name</th>
+                <th scope="col"> Account Password</th>
+            </tr>
+            {% for item in patientData %}
+            <tr>
+                <td>{{ item[0] }} </td>
+                <td>{{ item[1] }} </td>
+                <td>{{ item[2] }} </td>
+                <td>{{ item[3] }} </td>
+            </tr>
+            {% endfor %}
+        </table>
 
-            {% endif %}
+        {% endif %}
     </div>
 </div>
 
+
+<form method="POST" action="/newRx">
+    <div class="container container-table">
+        <div class="row vertical-center-row">
+
+            <div class="collapse" id="collapseRxForm">
+                <!--RxForm-->
+                <div class="card card-body">
+                    <div class="form-group row">
+                        <label for="example-text-input" class="col-2 col-form-label">Prescribe to Patient ID</label>
+                        <div class="col-10">
+                            <input class="form-control" type="text" value="ex. P12345 " id="example-text-input"
+                                name="rxToPid">
+                        </div>
+                    </div>
+                    <div class="card card-body">
+                        <div class="form-group row">
+                            <label for="example-date-input" class="col-2 col-form-label">Rx ID</label>
+                            <div class="col-10">
+                                <input class="form-control" type="text" value="" id="example-text-input"
+                                    name="rxID">
+                            </div>
+                        </div>
+                        <!--<input type="submit">-->
+                        <!-- Button trigger modal -->
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+                            Submit
+                        </button>
+
+                        <!-- Modal -->
+                        <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog"
+                            aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLabel">Prescription Confirmation</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        You are about to submit perscription to patient
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary"
+                                            data-dismiss="modal">Close</button>
+                                        <button type="submit" class="btn btn-primary">Confirm</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+    </div>
+</form>
 
 {% endblock %}

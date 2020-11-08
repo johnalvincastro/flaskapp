@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect, flash, url_for, ses
 from flask_bootstrap import Bootstrap
 from flask_mysqldb import MySQL
 import yaml
+import datetime
 
 app = Flask(__name__)
 app.secret_key = 'hush'
@@ -52,7 +53,7 @@ def my_form():
     return render_template('login_form.html')
 
 
-# User login check
+# User login check for staff
 @app.route('/dashboard', methods=['POST'])
 def authenticateStaff():
 
@@ -65,7 +66,6 @@ def authenticateStaff():
     data = cur.fetchone()  # user data from the database - returns a tuple
     print(data)  # logs data retrieved into the console
     cur2 = mysql.connection.cursor()
-    cur2
     cur2.execute(
         "SELECT position FROM staff_Position P JOIN staffWorksFor S ON (P.wsID = S.wsID) WHERE S.wsID='"+username+"' ")
     pos = cur2.fetchone()
@@ -131,6 +131,64 @@ def patients():
         patientData = cur.fetchall()
         print(patientData)
         return render_template('user_dash.html', patientData = patientData)
+
+#Section for patient sign in
+@app.route('/patient_login')
+def patient_form():
+    return render_template('patient_login_form.html')
+
+
+# User login check for staff
+@app.route('/patientdash', methods=['POST'])
+def authenticatePatient():
+
+    # Fetch staff data from database
+    patientID = request.form['patID']  # username = patID
+    patientPW = request.form['patPW']
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT * FROM Patient WHERE pid='" +
+                patientID + "' and password='" + patientPW+ "'")
+    data = cur.fetchone()  # user data from the database - returns a tuple
+    print(data)  # logs data retrieved into the console
+    #Fetch visit details
+    cur2 = mysql.connection.cursor()
+    cur2.execute(
+        "SELECT * FROM visit WHERE pid='"+ patientID +"'")
+    visit = cur2.fetchall()
+    print(visit)
+  #Fetch visit details
+    cur3 = mysql.connection.cursor()
+    cur3.execute(
+        "SELECT T.rxId, name, prescribeDate, expireDate FROM Medicine M JOIN takesMedicine T ON (M.rxid = T.rxId) WHERE patientId='"+ patientID +"'")
+    myrx = cur3.fetchall()
+    print(myrx)
+
+    if data is None:
+        return "Username or password is wrong"
+    else:
+        # return "Logged in successfully as user ID " + username
+        # return render_template('user_dash.html', username = username)
+        return render_template('patient_dash.html', data=data, visit=visit, myrx=myrx)
+
+# NEW Rx to patient
+@app.route('/newRx', methods=['POST'])
+def createNewRx():
+    if request.method == 'POST':
+        # Fetch form data
+        rxForm = request.form
+        pid = rxForm['rxToPid']
+        rx = rxForm['rxID']
+        cur = mysql.connection.cursor()
+        cur.execute("INSERT INTO takesMedicine(rxId,patientId) VALUES(%s, %s)",
+                    (rx, pid))
+        mysql.connection.commit()
+        cur.close()
+        # return 'success'
+        flash("Rx Added")
+        return render_template('user_dash.html')
+
+    return redirect(url_for('authenticateStaff'))
+
 
 
 if __name__ == '__main__':
