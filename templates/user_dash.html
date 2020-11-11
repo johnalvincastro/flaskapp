@@ -25,11 +25,6 @@
                 {% else %}
 
                 {% endif %}
-                <!--Collapse Admit Form
-                    <a class="btn btn-primary" data-toggle="collapse" href="#collapseAdmitForm" role="button"
-                        aria-expanded="false" aria-controls="collapseExample">
-                        Admit a Patient
-                    </a>-->
                 <ul class="list-group list-unstyled">
                     <li>
                         <button class="list-group-item list-group-item-action" type="button" data-toggle="collapse"
@@ -54,6 +49,12 @@
                         <button class="list-group-item list-group-item-action" type="button" data-toggle="collapse"
                             data-target="#collapseRxForm" aria-expanded="false" aria-controls="collapseExample">
                             New Rx
+                        </button>
+                    </li>
+                    <li>
+                        <button class="list-group-item list-group-item-action" type="button" data-toggle="collapse"
+                            data-target="#collapseDischgForm" aria-expanded="false" aria-controls="collapseExample">
+                            Discharge Patient
                         </button>
                     </li>
                 </ul>
@@ -229,8 +230,7 @@
                         <div class="form-group row">
                             <label for="example-date-input" class="col-2 col-form-label">Rx ID</label>
                             <div class="col-10">
-                                <input class="form-control" type="text" value="" id="example-text-input"
-                                    name="rxID">
+                                <input class="form-control" type="text" value="" id="example-text-input" name="rxID">
                             </div>
                         </div>
                         <!--<input type="submit">-->
@@ -267,8 +267,65 @@
             </div>
         </div>
     </div>
+</form>
+
+<!--Discharge Patient-->
+
+<form method="POST" action="/disch">
+    <div class="container container-table">
+        <div class="row vertical-center-row">
+
+            <div class="collapse" id="collapseDischgForm">
+                <!--RxForm-->
+                <div class="card card-body">
+                    <div class="form-group row">
+                        <label for="example-text-input" class="col-2 col-form-label">Patient ID discharged</label>
+                        <div class="col-10">
+                            <input class="form-control" type="text" value="ex. P12345 " id="example-text-input"
+                                name="pidDisch">
+                        </div>
+                    </div>
+                    <div class="card card-body">
+                        <div class="form-group row">
+                            <label for="example-text-input" class="col-2 col-form-label">Discharge Date</label>
+                            <div class="col-10">
+                                <input class="form-control" type="date" value="" id="example-text-input"
+                                    name="disDate" required>
+                            </div>
+                        </div>
+                    </div>
+                    <!--<input type="submit">-->
+                    <!-- Button trigger modal -->
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#dischModal">
+                        Submit
+                    </button>
+
+                    <!-- Modal -->
+                    <div class="modal fade" id="dischModal" tabindex="-1" role="dialog"
+                        aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel">Discharge Confirmation</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    You are about to discharge patient
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    <button type="submit" class="btn btn-primary">Confirm</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
     </div>
     </div>
 </form>
-
 {% endblock %}

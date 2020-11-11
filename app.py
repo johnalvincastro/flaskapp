@@ -53,14 +53,13 @@ def my_form():
     return render_template('login_form.html')
 
 
-# User login check for staff
+# User login check for staffSELEC
 @app.route('/dashboard', methods=['POST'])
 def authenticateStaff():
 
     # Fetch staff data from database
     username = request.form['username']  # username = wsId of staffWorksFor
     password = request.form['password']
-    cur = mysql.connection.cursor()
     cur.execute("SELECT * FROM staffWorksFor WHERE wsId='" +
                 username + "' and password='" + password + "'")
     data = cur.fetchone()  # user data from the database - returns a tuple
@@ -109,10 +108,9 @@ def createVisit():
         patientID = patientDetails['patientID']
         illness = patientDetails['illness']
         admitDate = patientDetails['admitDate']
-        disDate = '2999-12-30'
         cur = mysql.connection.cursor()
-        cur.execute("INSERT INTO visit(visitID, pid, illness, adDate, disDate) VALUES(%s, %s, %s, %s,%s)",
-                    (visitID, patientID, illness, admitDate, disDate))
+        cur.execute("INSERT INTO visit(visitID, pid, illness, adDate, disDate) VALUES(%s, %s, %s, %s, NULL)",
+                    (visitID, patientID, illness, admitDate))
         mysql.connection.commit()
         cur.close()
         # return 'success'
@@ -130,9 +128,11 @@ def patients():
     if resultValue > 0:
         patientData = cur.fetchall()
         print(patientData)
-        return render_template('user_dash.html', patientData = patientData)
+        return render_template('user_dash.html', patientData=patientData)
 
-#Section for patient sign in
+# Section for patient sign in
+
+
 @app.route('/patient_login')
 def patient_form():
     return render_template('patient_login_form.html')
@@ -147,22 +147,27 @@ def authenticatePatient():
     patientPW = request.form['patPW']
     cur = mysql.connection.cursor()
     cur.execute("SELECT * FROM Patient WHERE pid='" +
-                patientID + "' and password='" + patientPW+ "'")
+                patientID + "' and password='" + patientPW + "'")
     data = cur.fetchone()  # user data from the database - returns a tuple
     print(data)  # logs data retrieved into the console
-    #Fetch visit details
+    mysql.connection.commit()
+    cur.close()
+    # Fetch visit details
     cur2 = mysql.connection.cursor()
     cur2.execute(
-        "SELECT * FROM visit WHERE pid='"+ patientID +"'")
+        "SELECT * FROM visit WHERE pid='" + patientID + "'")
     visit = cur2.fetchall()
     print(visit)
-  #Fetch visit details
+    mysql.connection.commit()
+    cur2.close()
+  # Fetch visit details
     cur3 = mysql.connection.cursor()
     cur3.execute(
-        "SELECT T.rxId, name, prescribeDate, expireDate FROM Medicine M JOIN takesMedicine T ON (M.rxid = T.rxId) WHERE patientId='"+ patientID +"'")
+        "SELECT T.rxId, name, prescribeDate, expireDate FROM Medicine M JOIN takesMedicine T ON (M.rxid = T.rxId) WHERE patientId='" + patientID + "'")
     myrx = cur3.fetchall()
     print(myrx)
-
+    mysql.connection.commit()
+    cur3.close()
     if data is None:
         return "Username or password is wrong"
     else:
@@ -171,6 +176,8 @@ def authenticatePatient():
         return render_template('patient_dash.html', data=data, visit=visit, myrx=myrx)
 
 # NEW Rx to patient
+
+
 @app.route('/newRx', methods=['POST'])
 def createNewRx():
     if request.method == 'POST':
@@ -189,6 +196,98 @@ def createNewRx():
 
     return redirect(url_for('authenticateStaff'))
 
+# Discharge patient
+
+
+@app.route('/disch', methods=['POST'])
+def dischargePatient():
+    if request.method == 'POST':
+        # Fetch form data
+        dischg = request.form
+        pid = dischg['pidDisch']
+        disDate = dischg['disDate']
+        cur = mysql.connection.cursor()
+        cur.execute("UPDATE visit SET disDate= %s WHERE pid = %s",
+                    (disDate, pid))
+        mysql.connection.commit()
+        cur.close()
+        # return 'success'
+        flash("Patient Discharged")
+        return render_template('user_dash.html')
+
+    return redirect(url_for('authenticateStaff'))
+
+
+@app.route('/em_login')
+def equip_form():
+    return render_template('eqmanager_login_form.html')
+
+# User login check for staff
+
+
+@app.route('/em_dash', methods=['POST'])
+def authenticateEM():
+
+    # Fetch staff data from database
+    username = request.form['emName']
+    password = request.form['empw']
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT * FROM equipmentManager WHERE id='" +
+                username + "' and password='" + password + "'")
+    emData = cur.fetchone()  # user data from the database - returns a tuple
+    print(emData)  # logs data retrieved into the console
+    if emData is None:
+        return "Username or password is wrong"
+    else:
+        return render_template('eqdash.html', emData=emData)
+
+# NEW equiment to equipmentType
+
+
+@app.route('/addEquipment', methods=['POST'])
+def addEquip():
+    if request.method == 'POST':
+        # Fetch form data
+        addEq = request.form
+        eqid = addEq['eid']
+        eqtype = addEq['etype']
+        cur = mysql.connection.cursor()
+        cur.execute("INSERT INTO patientCareEquipment(id,type) VALUES(%s, %s)",
+                    (eqid, eqtype))
+        mysql.connection.commit()
+        cur.close()
+        flash("Added Equipment")
+        return render_template('eqdash.html')
+
+    return redirect(url_for('authenticateEm'))
+
+
+@app.route('/getEqs')
+def getEquip():
+    # Fetch equipment details
+    cur2 = mysql.connection.cursor()
+    resultValue = cur2.execute("SELECT * FROM patientCareEquipment")
+    if resultValue > 0:
+        equips = cur2.fetchall()
+        print(equips)
+        mysql.connection.commit()
+        cur2.close()
+        return render_template('eqdash.html', equips=equips)
+    else: 
+        flash("Equipment List Empty")
+        return render_template('eqdash.html')
+
+
+@app.route('/removeEq', methods=['POST'])
+def removeEquip():
+    deleteEq = request.form
+    eqid = deleteEq['equipID']
+    cur = mysql.connection.cursor()
+    cur.execute("DELETE FROM patientCareEquipment WHERE id = '" + eqid + "'")
+    mysql.connection.commit()
+    cur.close()
+    flash("Equipment Deleted")
+    return render_template('eqdash.html')
 
 
 if __name__ == '__main__':

@@ -1,0 +1,92 @@
+{% extends "bootstrap/base.html" %}
+
+{% block navbar %}
+<div class="navbar navbar-light navbar-fixed-top">
+    <button>
+    <a class="navbar-brand" href="/"><span class="glyphicon glyphicon-home" aria-hidden="true"> </span></a>
+    </button>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="container container-table">
+    <h1>Welcome {{ data [2]}} </h1>
+</div>
+<!--Visit Details-->
+<div class="row vertical-center-row">
+    <div class="text-center col-md-4 col-md-offset-4" style="background:rgb(255, 255, 255)">
+        <h3> My Visit</h3>
+    </div>
+</div>
+
+
+<div class="container container-table">
+    <div class="row vertical-center-row">
+        {% if not visit %}
+        No visit data received yet
+        {% else %}
+
+        <table class="table table striped">
+
+            <tr>
+                <th scope="col">Visit ID</th>
+                <th scope="col">Patient ID</th>
+                <th scope="col">Illness</th>
+                <th scope="col">Admit Date</th>
+                <th scope="col">Discharge Date</th>
+            </tr>
+            {% for item in visit %}
+            <tr>
+                <td>{{ item[0] }} </td>
+                <td>{{ item[1] }} </td>
+                <td>{{ item[2] }} </td>
+                <td>{{ item[3] }} </td>
+                <td>{{ item[4] }} </td>
+            </tr>
+            {% endfor %}
+        </table>
+
+        {% endif %}
+    </div>
+</div>
+
+<!--End Visit Details Section-->
+
+<!--Rx Details-->
+<div class="row vertical-center-row">
+    <div class="text-center col-md-4 col-md-offset-4" style="background:rgb(255, 255, 255)">
+        <h3> MyRx: Perscriptions</h3>
+    </div>
+</div>
+
+
+<div class="container container-table">
+    <div class="row vertical-center-row">
+        {% if not myrx %}
+        No perscription data received yet
+        {% else %}
+
+        <table class="table table striped">
+
+            <tr>
+                <th scope="col">rxid</th>
+                <th scope="col">Medication</th>
+                <th scope="col">Perscribe Date</th>
+                <th scope="col">Expire Date</th>
+            </tr>
+            {% for item in myrx %}
+            <tr>
+                <td>{{ item[0] }} </td>
+                <td>{{ item[1] }} </td>
+                <td>{{ item[2] }} </td>
+                <td>{{ item[3] }} </td>
+            </tr>
+            {% endfor %}
+        </table>
+
+        {% endif %}
+    </div>
+</div>
+
+<!--End Visit Details Section-->
+{% endblock %}
