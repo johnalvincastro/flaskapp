@@ -1,0 +1,187 @@
+{% extends "bootstrap/base.html" %}
+
+{% block navbar %}
+<div class="navbar navbar-light navbar-fixed-top">
+    <button>
+    <a class="navbar-brand" href="/"><span class="glyphicon glyphicon-home" aria-hidden="true"> </span></a>
+    </button>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Welcome</h1>
+
+    <div class="container container-table">
+        <div class="row vertical-center-row">
+            <div class="text-center col-md-4 col-md-offset-4" style="background:rgb(255, 255, 255)">
+                {% if data %}
+                Hello, signed is as {{ data[1] }}
+                <p>Admin ID: {{ data[0]}} </p>
+                    {% if hospitalID %}
+                    <p>Working at Hospital ID: {{ hospitalID[0] }} </p>
+                    {% else %}
+                    {% endif %}
+                    
+                {% else %}
+                Hello,
+                {% endif %}
+
+                <p>
+
+                    <!--Collapse Admit Form
+                    <a class="btn btn-primary" data-toggle="collapse" href="#collapseAdmitForm" role="button"
+                        aria-expanded="false" aria-controls="collapseExample">
+                        Admit a Patient
+                    </a>-->
+
+
+
+                    <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapseAddStaff"
+                        aria-expanded="false" aria-controls="collapseExample">
+                        Add New Staff Member
+                    </button>
+
+                    <button class="btn btn-primary" type="button" data-toggle="collapse"
+                        data-target="#collapseDeleteStaff" aria-expanded="false" aria-controls="collapseExample">
+                        Delete Staff Member
+                    </button>
+
+                <form action="/adminview">
+                    <button class="list-group-item list-group-item-action" type="submit">
+                        Get Patients List
+                    </button>
+                </form>
+
+
+                </p>
+                {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                {% for message in messages %}
+                <h3>{{ message }} </h3>
+                {% endfor %}
+                {% endif %}
+                {% endwith %}
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!--SECTION TO ADD STAFF-->
+<form method="POST" action="/addStaff">
+    <div class="container container-table">
+        <div class="row vertical-center-row">
+
+            <div class="collapse" id="collapseAddStaff">
+                <!--Admit Form-->
+                <div class="card card-body">
+                    <div class="form-group row">
+                        <label for="example-text-input" class="col-2 col-form-label">Create Staff ID</label>
+                        <div class="col-10">
+                            <input class="form-control" type="text" value="ex. P12345 " id="example-text-input"
+                                name="StaffID">
+                        </div>
+                    </div>
+                    <div class="card card-body">
+                        <div class="form-group row">
+                            <label for="example-date-input" class="col-2 col-form-label">Staff Name</label>
+                            <div class="col-10">
+                                <input class="form-control" type="text" value="ex: Jane Doe" id="example-text-input"
+                                    name="StaffName">
+                            </div>
+                        </div>
+                    <div class="card card-body">
+                        <div class="form-group row">
+                            <label for="example-date-input" class="col-2 col-form-label">Hospital ID</label>
+                            <div class="col-10">
+                                <input class="form-control" type="text" value="ex: L000001"  id="example-text-input"
+                                    name="HospID">
+                            </div>
+                        </div>
+                        <div class="card card-body">
+                            <div class="form-group row">
+                                <label for="example-text-input" class="col-2 col-form-label">Create Password</label>
+                                <div class="col-10">
+                                    <input class="form-control" type="text" value="ex. pumkinfun2345"
+                                        id="example-text-input" name="StaffPW">
+                                </div>
+                            </div>
+                            <input type="submit">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</form>
+
+
+
+
+
+
+<!--SECTION TO DELETE STAFF-->
+<form method="POST" action="/deleteStaff">
+    <div class="container container-table">
+        <div class="row vertical-center-row">
+
+            <div class="collapse" id="collapseDeleteStaff">
+                <!--Admit Form-->
+                <div class="card card-body">
+                    <div class="form-group row">
+                        <label for="example-text-input" class="col-2 col-form-label">Delete Staff ID</label>
+                        <div class="col-10">
+                            <input class="form-control" type="text" value="ex. P12345 " id="example-text-input"
+                                name="StaffID">
+                        </div>
+                    </div>
+
+                </div><input type="submit">
+            </div>
+        </div>
+    </div>
+
+</form>
+
+
+<!-- CONTENTS FOR PATIENT DATA-->
+<div class="container container-table">
+    <div class="row vertical-center-row">
+        {% if not patient %}
+
+        {% else %}
+
+        <table class="table table striped">
+
+            <tr>
+                <th scope="col">Visit ID</th>
+                <th scope="col">Patient ID</th>
+                <th scope="col">Illness</th>
+                <th scope="col"> Admission Date</th>
+                <th scope="col"> Discharge Date</th>
+            </tr>
+            {% for item in patient %}
+            <tr>
+                <td>{{ item[0] }} </td>
+                <td>{{ item[1] }} </td>
+                <td>{{ item[2] }} </td>
+                <td>{{ item[3] }} </td>
+                <td>{{ item[4] }} </td>
+            </tr>
+            {% endfor %}
+        </table>
+
+        {% endif %}
+    </div>
+</div>
+
+
+
+
+
+{% endblock %}

@@ -16,7 +16,7 @@ app.config['MYSQL_PASSWORD'] = db['mysql_password']
 app.config['MYSQL_DB'] = db['mysql_db']
 
 mysql = MySQL(app)
-
+# basic template for inspiration do not uncomment for the app
 # adding data into databse INSERT A USER
 # @app.route('/add_user', methods=['GET', 'POST'])
 # def index():
@@ -60,6 +60,7 @@ def authenticateStaff():
     # Fetch staff data from database
     username = request.form['username']  # username = wsId of staffWorksFor
     password = request.form['password']
+    cur = mysql.connection.cursor()
     cur.execute("SELECT * FROM staffWorksFor WHERE wsId='" +
                 username + "' and password='" + password + "'")
     data = cur.fetchone()  # user data from the database - returns a tuple
@@ -131,8 +132,6 @@ def patients():
         return render_template('user_dash.html', patientData=patientData)
 
 # Section for patient sign in
-
-
 @app.route('/patient_login')
 def patient_form():
     return render_template('patient_login_form.html')
@@ -172,12 +171,9 @@ def authenticatePatient():
         return "Username or password is wrong"
     else:
         # return "Logged in successfully as user ID " + username
-        # return render_template('user_dash.html', username = username)
         return render_template('patient_dash.html', data=data, visit=visit, myrx=myrx)
 
 # NEW Rx to patient
-
-
 @app.route('/newRx', methods=['POST'])
 def createNewRx():
     if request.method == 'POST':
@@ -197,8 +193,6 @@ def createNewRx():
     return redirect(url_for('authenticateStaff'))
 
 # Discharge patient
-
-
 @app.route('/disch', methods=['POST'])
 def dischargePatient():
     if request.method == 'POST':
@@ -288,6 +282,83 @@ def removeEquip():
     cur.close()
     flash("Equipment Deleted")
     return render_template('eqdash.html')
+
+# CODE FOR ADMIN BELOW
+
+@app.route('/admin_login')
+def admin_form():
+    return render_template('admin_login_form.html')
+
+# Admin Login check credentials
+@app.route('/admin_dashboard', methods=['POST'])
+def authenticateAdmin():
+
+    # fetch admin data from database
+    username = request.form['username']
+    password = request.form['password']
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT* FROM administrator WHERE adminId ='" + username
+    + "' and password = '" + password + "'" )
+    
+    data = cur.fetchone() #user data from the database  -retures a tuple
+    cur2 = mysql.connection.cursor()
+    cur2.execute("SELECT * FROM manages WHERE adminId = '"+ username +"'")
+    hospitalID = cur2.fetchone()
+    print(hospitalID)
+
+    # viewing what the admins see
+
+    if data is None:
+        return "Username or password is wrong"
+    else:
+        return render_template('admin_dash.html', data=data, hospitalID=hospitalID )
+
+
+
+@app.route('/addStaff', methods=['POST'])
+def newstaff():
+    if request.method == 'POST':
+        #Fetch form data
+        N_staff = request.form
+        wsid = N_staff['StaffID']
+        name = N_staff['StaffName']
+        hospitalID = N_staff['HospID']
+        password = N_staff['StaffPW']
+        cur = mysql.connection.cursor()
+        cur.execute("INSERT INTO staffWorksFor(wsid, name, hospitalID, password) VALUES(%s, %s, %s, %s)",
+                    (wsid, name, hospitalID, password))
+        mysql.connection.commit()           
+        cur.close()
+        
+       # return 'success'
+    
+        flash("Staff Added")
+        return render_template('admin_dash.html')
+
+    return redirect(url_for('authenticateAdmin'))
+
+
+@app.route('/deleteStaff',methods=['POST'])
+def deletestaff():
+        #fetch from data
+        D_Staff=request.form
+        wsid = D_Staff["StaffID"]
+        cur = mysql.connection.cursor()
+        cur.execute("DELETE FROM staffWorksFor WHERE wsid='"+ wsid +"'")
+        mysql.connection.commit()
+        cur.close()
+        flash("Staff deleted")
+        return render_template('admin_dash.html')
+
+@app.route('/adminview')
+def adminv():
+    #fetch from data
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT * FROM visit")
+    patient = cur.fetchall()
+    print(patient)
+    return render_template('admin_dash.html', patient=patient)
+
 
 
 if __name__ == '__main__':
